@@ -1,0 +1,6 @@
+config:
+  BuchheitHistory-Database:appName: BuchheitHistory
+  BuchheitHistory-Database:environment: dev
+  azure-native:location: WestUS
+  azure-native:subscriptionId: 0f125f5c-df46-4a72-8ec6-0434c121e378
+  azure-native:tenantId: 46a26e81-4ab3-4931-b3f5-07ab56a01c02

@@ -1,0 +1,14 @@
+name: BuchheitHistory-Core
+runtime: yaml
+description: Buchheit History Core Infra in YAML
+resources:
+  myResourceGroup:
+    type: azure-native:resources:ResourceGroup
+    properties:
+      location: westus
+      resourceGroupName: rg-buchheithistory-dev-1
+      tags:
+        app: buchheithistory
+        env: dev
+outputs:
+  resourceGroupName: ${myResourceGroup.name}
