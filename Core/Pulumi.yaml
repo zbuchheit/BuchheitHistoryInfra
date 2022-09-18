@@ -1,6 +1,14 @@
 name: BuchheitHistory-Core
 runtime: yaml
 description: Buchheit History Core Infra in YAML
+variables:
+  workspaceSharedKeys:
+    Fn::Invoke:
+      Function: azure-native:operationalinsights:getSharedKeys
+      Arguments:
+        resourceGroupName: ${myResourceGroup.name}
+        workspaceName: ${workspace.name} 
+      Return: primarySharedKey  
 resources:
   myResourceGroup:
     type: azure-native:resources:ResourceGroup
@@ -10,5 +18,34 @@ resources:
       tags:
         app: buchheithistory
         env: dev
+  workspace: 
+    type: azure-native:operationalinsights:Workspace
+    properties:
+      resourceGroupName: ${myResourceGroup.name}
+      sku:
+        name: "PerGB2018"
+      retentionInDays: 30
+  containerAppEnvironment:
+    type: azure-native:app:ManagedEnvironment
+    properties:
+      name: containerenvbuchheithistory
+      resourceGroupName: ${myResourceGroup.name}
+      location: westus
+      appLogsConfiguration:
+        destination: "log-analytics"
+        logAnalyticsConfiguration:
+          customerId: ${workspace.customerId}
+          sharedKey: ${workspaceSharedKeys}    
+  containerRegistry:
+    type: azure-native:containerregistry:Registry
+    properties:
+      registryName: buchheithistoryacr
+      resourceGroupName: ${myResourceGroup.name}
+      sku:
+        name: "Basic"
+      adminUserEnabled: true        
 outputs:
   resourceGroupName: ${myResourceGroup.name}
+  containerRegistryName: ${containerRegistry.name}
+  containerRegistryLoginServer: ${containerRegistry.loginServer}
+  containerAppEnvironmentId: ${containerAppEnvironment.id}
